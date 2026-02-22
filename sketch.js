@@ -385,6 +385,8 @@ function handleCanvasClick() {
         for (let i = 0; i < pebbles.length; i++) {
             if (pebbles[i].hovered(mouseX, mouseY)) {
                 loadContent(i);
+                console.log(pebbles[i].t);
+                break;
             }
         }
     }
