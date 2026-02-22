@@ -3,8 +3,8 @@ const _pu = 80;
 class Pebble {
     constructor(t, idx) {
         this.type = random(["rock", "paper", "scissors"]);
-        // this.x = x;
-        // this.y = y;
+        this.x = 0;
+        this.y = 0;
         // this.x1 = this.x + _pu * 2;
         // this.y1 = this.y - _pu * 2;
         this.t = t;
@@ -14,6 +14,8 @@ class Pebble {
     draw(x, y) {
         push();
 
+        this.x = x;
+        this.y = y;
         // let x = this.x;
         // let y = this.y;
         let s = 1.2;
