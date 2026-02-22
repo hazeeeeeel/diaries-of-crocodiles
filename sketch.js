@@ -32,8 +32,54 @@ const regions = ["ML", "TW", "HK"];
 var region_u = 10;
 
 function preload() {
+    // loadJSON('data.json', (data) => {
+    //     works = data.works;
+    //     console.log(works);
+    // });
+    // while (works_en === undefined || works_cn === undefined || about_en === undefined || about_cn === undefined) {
+        // wait until data is loaded
+        fetchJSONData();
+    // }
+        
+
+}
+
+function setup() {
+    focusMode = false;
+
+    let w = windowWidth > minWidth ? windowWidth : minWidth;
+    let h = windowHeight > minHeight ? windowHeight - 60 : minHeight - 60;
+    createCanvas(w, h);
     
-        fetchJSONData();        
+    year_u = (width - 60) / (years.length);
+    region_u = (height - 260) / (regions.length - 1);
+
+    if (lang === "en") {
+        works = works_en;
+        about_content = about_en;
+    } else {
+        works = works_cn;
+        about_content = about_cn;
+    }
+
+    if(works && works.length > 0) {
+        for (let i = 0; i < works.length; i++) {
+            // const p = new Pebble((works[i].pubyear - 1985) * year_u + 80, regions.indexOf(works[i].publoc) * region_u + 60);
+            let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
+            x = min(x, width - _pu - 60);
+            x = max(x, _pu + 60);
+            let y = regions.indexOf(works[i].region) * region_u + 120 + random(-120, 120);
+            y = min(y, height - _pu - 60);
+            y = max(y, _pu + 60);
+
+            // const p = new Pebble (x, y, works[i].title, i);
+            const p = new Pebble (works[i].title, i);
+            pebbles.push(p);
+        }
+    }
+
+    // about.style.display = "block";
+    // backhome.style.display = "none";
 
 }
 
@@ -59,55 +105,40 @@ function fetchJSONData() {
         console.error('Error fetching JSON:', error);
     });
 
-}
+    // fetch excerpt info
+    // fetch('reader.json')
+    // .then(response => {
+    //     if (!response.ok) {
+    //     throw new Error(`HTTP error! Status: ${response.status}`);
+    //     }
+    //     // The .json() method automatically parses the JSON response into a JS object
+    //     return response.json(); 
+    // })
+    // .then(jsonData => {
+    //     // console.log(jsonData); // Use the parsed JavaScript object
+    //     readers = jsonData.readers;
+    //     console.log(readers);
+    // })
+    // .catch(error => {
+    //     console.error('Error fetching JSON:', error);
+    // });
 
-function setup() {
-    focusMode = false;
-
-    let w = windowWidth > minWidth ? windowWidth : minWidth;
-    let h = windowHeight > minHeight ? windowHeight - 60 : minHeight - 60;
-    createCanvas(w, h);
-    
-    year_u = (width - 60) / (years.length);
-    region_u = (height - 260) / (regions.length - 1);
-
-    // handle language settings and source of text content initially
-    if (lang === "en") {
-        works = works_en;
-        about_content = about_en;
-    } else {
-        works = works_cn;
-        about_content = about_cn;
-    }
-
-    // create pebbles
-    if(works && works.length > 0) {
-        for (let i = 0; i < works.length; i++) {
-            // const p = new Pebble((works[i].pubyear - 1985) * year_u + 80, regions.indexOf(works[i].publoc) * region_u + 60);
-            let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
-            x = min(x, width - _pu - 60);
-            x = max(x, _pu + 60);
-            let y = regions.indexOf(works[i].region) * region_u + 120 + random(-120, 120);
-            y = min(y, height - _pu - 60);
-            y = max(y, _pu + 60);
-
-            // const p = new Pebble (x, y, works[i].title, i);
-            const p = new Pebble (works[i].title, i);
-            pebbles.push(p);
-        }
-    }
 }
 
 function draw() {
     if (!works_en) return; // wait until data is loaded
+    // if (pebbles.length === 0) return; // wait until pebbles are generated
     clear();
     background(248);
+    // ellipse(mouseX, mouseY, 50, 50);
 
-    // draw pebbles
+    // generate pebbles
     if (focusMode) {
         if(focusIdx >= 0) {
             pebbles[focusIdx].drawFocus();
+            // loadContent(focusIdx);
         } else {
+            // loadContent(focusIdx);
         } 
     } else {
         drawPebbles();
@@ -118,8 +149,7 @@ function draw() {
     // console.log(works);
 
     
-    // Show dynamic title when hovering over pebbles on home page
-    // Show static title information on the left upper corner when focusing on a specific work/pebble
+    
     if (focusMode) {
         if (focusIdx >= 0) {
             title.innerHTML = `
@@ -136,15 +166,16 @@ function draw() {
         title.innerHTML = `<p></p>`;
     }
 
-
-
-    // Noise effect on the background
+        // noise effect
         
     // Load the pixels array.
     loadPixels();
 
     // Get the pixel density.
     let d = pixelDensity();
+
+    // Calculate the halfway index in the pixels array.
+    let halfImage = 4 * (d * width) * (d * height / 2);
 
     // Noise Effect.
     for (let i = 0; i < pixels.length - 1; i += 11) {
@@ -284,7 +315,6 @@ function drawPebbles() {
 
     // if (!focusMode) {
         for (let i = 0; i < pebbles.length; i++) {
-            // calculate pebble position based on publication year and region
             let p = pebbles[i];
             let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
             x = min(x, width - _pu - 60);
@@ -295,6 +325,9 @@ function drawPebbles() {
 
             p.draw(x, y);
         }
+    // } else {
+    //     pebbles[focusIdx].draw();
+    // }
 
     // reset drop shadow
     drawingContext.shadowOffsetX = 0;
@@ -302,19 +335,21 @@ function drawPebbles() {
     drawingContext.shadowBlur = 0;
     drawingContext.shadowColor = 'rgba(0, 0, 0, 0)';
 
-    // draw pebbles on top again to hide shadows that overlap with the shapes
-    for (let i = 0; i < pebbles.length; i++) {
-        let p = pebbles[i];
-        let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
-        x = min(x, width - _pu - 60);
-        x = max(x, _pu + 60);
-        let y = regions.indexOf(works[i].region) * region_u + 120 + i * 20 - 40;
-        y = min(y, height - _pu - 60);
-        y = max(y, _pu + 60);
+    // if (!focusMode) {
+        for (let i = 0; i < pebbles.length; i++) {
+            let p = pebbles[i];
+            let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
+            x = min(x, width - _pu - 60);
+            x = max(x, _pu + 60);
+            let y = regions.indexOf(works[i].region) * region_u + 120 + i * 20 - 40;
+            y = min(y, height - _pu - 60);
+            y = max(y, _pu + 60);
 
-        p.draw(x, y);
-    }
-   
+            p.draw(x, y);
+        }
+    // } else {
+    //     pebbles[focusIdx].draw();
+    // }
     pop();
 }
 
@@ -322,10 +357,9 @@ function windowResized() {
     let w = windowWidth > minWidth ? windowWidth : minWidth;
     let h = windowHeight > minHeight ? windowHeight - 60 : minHeight - 60;
     resizeCanvas(w, h);
+    
 }
 
-// track mouse movement to determine 
-// if hovering over pebbles and display corresponding title information
 function mouseMoved() {
     // console.log(3);
     hovering = false;
@@ -346,8 +380,6 @@ function mouseMoved() {
     }
 }
 
-// track mouse click to determine 
-// if clicking on pebbles and load corresponding content in the reader
 function handleCanvasClick() {
     if (!focusMode) {
         for (let i = 0; i < pebbles.length; i++) {
@@ -359,6 +391,12 @@ function handleCanvasClick() {
 }
 
 function loadContent(i) {
+    // if (lang === "en") {
+    //     works = works_en;
+    // } else {
+    //     works = works_cn;
+    // }
+
     reader.style.display = "block";
 
     if (i >= 0) {
@@ -393,8 +431,6 @@ function loadContent(i) {
     }
 }
 
-// helper function to parse text content with different types
-// return corresponding HTML that adds different styles/classes
 function parseContent(content) {
     let html = "";
     let font = lang === "en" ? "lector" : "zhuzi-mincho";
