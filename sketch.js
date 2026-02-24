@@ -466,9 +466,18 @@ function toggleLang(l) {
 
         document.getElementById("toggle-cn").classList.remove("selected");
         document.getElementById("toggle-en").classList.add("selected");
+
         menu_title_text.innerHTML = menu_title_text_en;
+        menu_title_text.classList.add("lector");
+        menu_title_text.classList.remove("zhuzi-mincho");
+
         about_btn.innerHTML = about_btn_en;
+        about_btn.classList.add("lector");
+        about_btn.classList.remove("zhuzi-mincho");
+        
         back_btn.innerHTML = back_btn_en;
+        back_btn.classList.add("lector");
+        back_btn.classList.remove("zhuzi-mincho")
     } else {
         lang = "cn";
 
@@ -476,9 +485,18 @@ function toggleLang(l) {
 
         document.getElementById("toggle-en").classList.remove("selected");
         document.getElementById("toggle-cn").classList.add("selected");
+
         menu_title_text.innerHTML = menu_title_text_cn;
+        menu_title_text.classList.add("zhuzi-mincho");
+        menu_title_text.classList.remove("lector");
+
         about_btn.innerHTML = about_btn_cn;
+        about_btn.classList.add("zhuzi-mincho");
+        about_btn.classList.remove("lector");
+
         back_btn.innerHTML = back_btn_cn;
+        back_btn.classList.add("zhuzi-mincho");
+        back_btn.classList.remove("lector")
     }
 }
 
