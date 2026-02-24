@@ -2,25 +2,29 @@ const minWidth = 800;
 const minHeight = 600;
 
 var data;
-var works_en;
-var works_cn;
-var about_en;
-var about_cn;
-var works;
+
 var about_content;
-// var readers;
 var pebbles = [];
 var lang = "en";
 
 const main = document.querySelector("#p5");
 const title = document.querySelector("#title");
+const reader_container = document.querySelector("#reader-container");
 const reader = document.querySelector("#reader");
 const reader_content = document.querySelector("#reader-content");
 reader.style.display = "none";
-const r_idx = document.querySelector("#reader-idx");
-const home = document.querySelector("#home");
-const about = document.querySelector("#about");
-const backhome = document.querySelector("#backhome");
+const banner = document.querySelector("#banner");
+const menu_title_text = document.querySelector("#menu-title-text");
+const about_btn = document.querySelector("#about-btn");
+const back_btn = document.querySelector("#back-btn");
+
+const menu_title_text_en = "Diaries of Crocodiles: Lesbian Literature in Chinese";
+const back_btn_en = "&lt;&lt;&nbsp;&nbsp;Back";
+const about_btn_en = "About";
+
+const menu_title_text_cn = "鳄鱼的手记：中文女同性恋文学";
+const back_btn_cn = "&lt;&lt;&nbsp;&nbsp;返回";
+const about_btn_cn = "关于";
 
 let hovering = false;
 let focusMode = false;
@@ -28,20 +32,11 @@ let focusIdx = -1;
 let msg = [];
 
 const years = [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025, 2030];
-var year_u = 10;
 const regions = ["ML", "TW", "HK"];
-var region_u = 10;
 
 function preload() {
-    // loadJSON('data.json', (data) => {
-    //     works = data.works;
-    //     console.log(works);
-    // });
-    // while (works_en === undefined || works_cn === undefined || about_en === undefined || about_cn === undefined) {
-        // wait until data is loaded
-        data = loadJSON('data.json');
-    // }
-        
+    
+    data = loadJSON('data.json');        
 
 }
 
@@ -49,95 +44,36 @@ function setup() {
     focusMode = false;
 
     let w = windowWidth > minWidth ? windowWidth : minWidth;
-    let h = windowHeight > minHeight ? windowHeight - 60 : minHeight - 60;
+    let h = main.getBoundingClientRect().height > minHeight ? main.getBoundingClientRect().height : minHeight;
     createCanvas(w, h);
-    
-    year_u = (width - 60) / (years.length);
-    region_u = (height - 260) / (regions.length - 1);
 
-    works_en = data.works.en;
-    works_cn = data.works.cn;
-    about_en = data.about.en;
-    about_cn = data.about.cn;
-    console.log(works_en);
+    works = data.works;
+    about_content = data.about;
+    // about = data.about;
 
-    if (lang === "en") {
-        works = works_en;
-        about_content = about_en;
-    } else {
-        works = works_cn;
-        about_content = about_cn;
-    }
+    let banner_height = banner.getBoundingClientRect().height;
+    reader_container.style.height = `calc(100% - ${banner_height}px)`;
+    reader_container.style.top = `${banner_height}px`;
+
+    reader_container.pointerEvents = "none";
+
+    menu_title_text.innerHTML = lang === "en" ? menu_title_text_en : menu_title_text_cn;
+    about_btn.innerHTML = lang === "en" ? about_btn_en : about_btn_cn;
+    back_btn.innerHTML = lang === "en" ? back_btn_en : back_btn_cn;
 
     if(works && works.length > 0) {
         for (let i = 0; i < works.length; i++) {
-            // const p = new Pebble((works[i].pubyear - 1985) * year_u + 80, regions.indexOf(works[i].publoc) * region_u + 60);
-            let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
-            x = min(x, width - _pu - 60);
-            x = max(x, _pu + 60);
-            let y = regions.indexOf(works[i].region) * region_u + 120 + random(-120, 120);
-            y = min(y, height - _pu - 60);
-            y = max(y, _pu + 60);
-
-            // const p = new Pebble (x, y, works[i].title, i);
-            const p = new Pebble (works[i].title, i);
+            const p = new Pebble (i);
             pebbles.push(p);
         }
     }
 
-    // about.style.display = "block";
-    // backhome.style.display = "none";
-
 }
 
-// function fetchJSONData() {
-//     // fetch book info 
-//     fetch('data.json')
-//     .then(response => {
-//         if (!response.ok) {
-//         throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-//         // The .json() method automatically parses the JSON response into a JS object
-//         return response.json(); 
-//     })
-//     .then(jsonData => {
-//         // console.log(jsonData); // Use the parsed JavaScript object
-//         works_en = jsonData.works.en;
-//         works_cn = jsonData.works.cn;
-//         about_en = jsonData.about.en;
-//         about_cn = jsonData.about.cn;
-//         console.log(works_en);
-//     })
-//     .catch(error => {
-//         console.error('Error fetching JSON:', error);
-//     });
-
-    // fetch excerpt info
-    // fetch('reader.json')
-    // .then(response => {
-    //     if (!response.ok) {
-    //     throw new Error(`HTTP error! Status: ${response.status}`);
-    //     }
-    //     // The .json() method automatically parses the JSON response into a JS object
-    //     return response.json(); 
-    // })
-    // .then(jsonData => {
-    //     // console.log(jsonData); // Use the parsed JavaScript object
-    //     readers = jsonData.readers;
-    //     console.log(readers);
-    // })
-    // .catch(error => {
-    //     console.error('Error fetching JSON:', error);
-    // });
-
-// }
-
 function draw() {
-    if (!works_en) return; // wait until data is loaded
-    // if (pebbles.length === 0) return; // wait until pebbles are generated
+    
     clear();
     background(248);
-    // ellipse(mouseX, mouseY, 50, 50);
 
     // generate pebbles
     if (focusMode) {
@@ -152,30 +88,21 @@ function draw() {
         drawCoordinates();
     }
 
-    
-    // console.log(works);
-
-    
-    
     if (focusMode) {
-        if (focusIdx >= 0) {
-            title.innerHTML = `
-            <p>${works[focusIdx].title}</p>
-            <p class="detail">${works[focusIdx].author}</p>
-            <p class="detail">${works[focusIdx].publoc}, ${works[focusIdx].pubyear}</p>
-            <p class="detail">region: ${works[focusIdx].region}</p>`;
-        } else {
-            title.innerHTML = `<p>About</p>`;
-        }
-    } else if (hovering) {
-        title.innerHTML = `<p>${msg.join("<br>")}</p>`;
+        reader_container.pointerEvents = "auto";
     } else {
-        title.innerHTML = `<p></p>`;
+        reader_container.pointerEvents = "none";
     }
 
-        // noise effect
-        
-    // Load the pixels array.
+    // console.log(works);
+
+    // noise effect
+        // addNoiseEffect();
+   
+}
+
+function addNoiseEffect() {
+     // Load the pixels array.
     loadPixels();
 
     // Get the pixel density.
@@ -240,6 +167,11 @@ function draw() {
 function drawCoordinates() {
     push();
 
+    // set space
+    let padding = 30;
+    let tickLength = 5;
+    let labelOffset = 5;
+
     setLineDash([]); // reset line dash
 
     // reset drop shadow
@@ -250,29 +182,32 @@ function drawCoordinates() {
     // draw axes and labels
     stroke(0);
     strokeWeight(1);
-    line(30, height - 40, width - 30, height - 40); // x-axis
-    line(30, 0, 30, height - 40); // y-axis
-    textSize(8);
+    line(padding, height - padding, width - padding, height - padding); // x-axis
+    line(padding, padding, padding, height - padding); // y-axis
+    textSize(10);
     fill(0);
+
+    var year_u = (width - padding * 2) / ((years.length + 1) * 5); // segment unit of 1 year
+    var region_u = (height - padding * 2) / regions.length; // segment unit of 1 region
     
     for (let i = 0; i < years.length; i += 1) {
         // draw tick marks
         stroke(0);
         strokeWeight(1);
-        line(80 + i * year_u, height - 40, 80 + i * year_u, height - 35);
+        line(padding + (i + 1) * 5 * year_u, height - padding, padding + (i + 1) * 5 * year_u, height - padding - tickLength);
         // draw labels
         noStroke();
-        text(years[i], 80 + i * year_u - 9, height - 20);
+        text(years[i],padding + (i + 1) * 5 * year_u - 10, height - 17);
     }
     
     for (let j = 0; j < regions.length; j += 1) {
         // draw tick marks
         stroke(0);
         strokeWeight(1);
-        line(30, j * region_u + 120, 35, j * region_u + 120);
+        line(padding, padding + (j + 0.5) * region_u, padding + tickLength, padding + (j + 0.5) * region_u);
         // draw labels
         noStroke();
-        text(regions[j], 10, j * region_u + 124);
+        text(regions[j], 10, padding + (j + 0.5) * region_u + 4);
     }
 
     // draw crosshair
@@ -289,8 +224,8 @@ function drawCoordinates() {
 
     // display mouse coordinates
     // calculate values
-    let xVal = floor(((mouseX - 30) / year_u) * 5 + 1988);
-    let yIdx = Math.round((mouseY - 120) / region_u);
+    let xVal = floor(((mouseX + year_u / 2 - padding) / year_u) + 1985);
+    let yIdx = floor((mouseY - padding) / region_u);
     if (yIdx < 0) yIdx = 0;
     if (yIdx >= regions.length) yIdx = regions.length - 1;
     let yVal = regions[yIdx];
@@ -342,13 +277,17 @@ function drawPebbles() {
     drawingContext.shadowBlur = 0;
     drawingContext.shadowColor = 'rgba(0, 0, 0, 0)';
 
+    let padding = 30;
+    var year_u = (width - padding * 2) / ((years.length + 1) * 5); // segment unit of 1 year
+    var region_u = (height - padding * 2) / regions.length; // segment unit of 1 region
+
     // if (!focusMode) {
         for (let i = 0; i < pebbles.length; i++) {
             let p = pebbles[i];
-            let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
+            let x = (works[i].pubyear - 1985) * year_u + padding;
             x = min(x, width - _pu - 60);
             x = max(x, _pu + 60);
-            let y = regions.indexOf(works[i].region) * region_u + 120 + i * 20 - 40;
+            let y = (regions.indexOf(works[i].region) + 0.5) * region_u + padding + (i - 6) * 10;
             y = min(y, height - _pu - 60);
             y = max(y, _pu + 60);
 
@@ -362,9 +301,12 @@ function drawPebbles() {
 
 function windowResized() {
     let w = windowWidth > minWidth ? windowWidth : minWidth;
-    let h = windowHeight > minHeight ? windowHeight - 60 : minHeight - 60;
+    let h = main.getBoundingClientRect().height > minHeight ? main.getBoundingClientRect().height : minHeight;
     resizeCanvas(w, h);
     
+    let banner_height = banner.getBoundingClientRect().height;
+    reader_container.style.height = `calc(100% - ${banner_height}px)`;
+    reader_container.style.top = `${banner_height}px`;
 }
 
 function mouseMoved() {
@@ -374,25 +316,29 @@ function mouseMoved() {
     if (!focusMode) {
         for (let p of pebbles) {
             if (p.hovered(mouseX, mouseY)) {
-                fill("#82ffa3");
-                noStroke();
-                ellipse(mouseX, mouseY, 10, 10);
-
                 hovering = true;
-                msg.push(p.t);
-            } else {
-                hovering = hovering || false;
-            }
+                // console.log("hovering");
+
+                let font = lang === "en" ? "lector" : "zhuzi-mincho";
+                let titleText = lang === "en" ? works[p.idx].title.en : works[p.idx].title.cn;
+                title.innerHTML = `<p class="${font}">${titleText}</p>`;
+            } 
         }
-    }
+        if (!hovering) {
+            title.innerHTML = `<p></p>`;
+        }
+    } 
+    
+    
 }
 
 function handleCanvasClick() {
+    console.log("canvas clicked");
     if (!focusMode) {
         for (let i = 0; i < pebbles.length; i++) {
             if (pebbles[i].hovered(mouseX, mouseY)) {
                 loadContent(i);
-                console.log(pebbles[i].t);
+                
                 break;
             }
         }
@@ -400,13 +346,6 @@ function handleCanvasClick() {
 }
 
 function loadContent(i) {
-    // if (lang === "en") {
-    //     works = works_en;
-    // } else {
-    //     works = works_cn;
-    // }
-
-    reader.style.display = "block";
 
     if (i >= 0) {
         focusMode = true;
@@ -418,44 +357,52 @@ function loadContent(i) {
         reader_content.innerHTML = `${html}`;
 
         let font = lang === "en" ? "lector" : "zhuzi-mincho";
-
+        let titleText = lang === "en" ? works[i].title.en : works[i].title.cn;
+        let authorText = lang === "en" ? works[i].author.en : works[i].author.cn;
+        let regionText = lang === "en" ? works[i].publoc.en : works[i].publoc.cn;
         title.innerHTML = `
-        <p class="${font}">${works[focusIdx].title}</p>
-        <p class="detail ${font}">${works[focusIdx].author}</p>
-        <p class="detail ${font}">${works[focusIdx].publoc}, ${works[focusIdx].pubyear}</p>
-        <p class="detail ${font}">region: ${works[focusIdx].region}</p>`;
+            <p class="${font}">${titleText}</p>
+            <p class="font-size-2 ${font}">${authorText}</p>
+            <p class="font-size-2 ${font}">${regionText}, ${works[i].pubyear}</p>`;
             
-
-        about.style.display = "inline-block";
-        backhome.style.display = "inline-block";
-    } else {
-        // console.log(about_content);
+        about_btn.style.display = "inline-block";
+        back_btn.style.display = "inline-block";
+    } 
+    else if (i === -2) {
         let html = parseContent(about_content);
         reader_content.innerHTML = `${html}`;
 
-        title.innerHTML = `<p>About</p>`;
+        let font = lang === "en" ? "lector" : "zhuzi-mincho";
+        let titleText = lang === "en" ? "About" : "关于";
+        title.innerHTML = `<p class="${font}">${titleText}</p>`;
         
-        about.style.display = "none";
-        backhome.style.display = "inline-block";
+        about_btn.style.display = "none";
+        back_btn.style.display = "inline-block";
+
+        reader.style.display = "block";
     }
+        
+    reader.style.display = "block";
+
 }
 
 function parseContent(content) {
     let html = "";
     let font = lang === "en" ? "lector" : "zhuzi-mincho";
+
     for (let j = 0; j < content.length; j++) {
-            let passage = content[j];
-            if (passage.type === 1) {
+            let passage = lang === "en" ? content[j].en : content[j].cn;
+            if (content[j].type === 1) {
                 // just text
-                html += `<p class="content-text-1 ${font}">${passage.text}</p>`;
-            } else if (passage.type === 2) {
+                html += `<p class="content-text-1 ${font}">${passage}</p>`;
+            } else if (content[j].type === 2) {
                 // quote
-                html += `<p class="content-text-2 ${font}">${passage.text}</p>`;
+                html += `<p class="content-text-2 ${font}">"${passage}"</p>`;
             } else {
                 // cite info
-                html += `<p class="content-text-3 ${font}">${passage.text}</p>`;
+                html += `<p class="content-text-3 ${font}">${passage}</p>`;
             }
-        }
+    }
     return html;
 }
 
@@ -467,15 +414,19 @@ function loadHome() {
     reader_content.innerHTML = "";
     console.log("home");
 
-    about.style.display = "inline-block";
-    backhome.style.display = "none";
+    about_btn.style.display = "inline-block";
+    back_btn.style.display = "none";
 }
 
 function loadAbout() {
+    console.log("load about");
     focusMode = true;
-    focusIdx = -1;
+    focusIdx = -2;
 
-    loadContent(-1);
+    loadContent(-2);
+
+    // console.log(about_content);
+        
 }
 
 function setLineDash(list) {
@@ -485,13 +436,29 @@ function setLineDash(list) {
 function toggleLang(l) {
     if (l === "en") {
         lang = "en";
-        works = works_en;
-        about_content = about_en;
+        
         loadContent(focusIdx);
+
+        document.getElementById("toggle-cn").classList.remove("selected");
+        document.getElementById("toggle-en").classList.add("selected");
+        menu_title_text.innerHTML = menu_title_text_en;
+        about_btn.innerHTML = about_btn_en;
+        back_btn.innerHTML = back_btn_en;
     } else {
         lang = "cn";
-        works = works_cn;
-        about_content = about_cn;
+
         loadContent(focusIdx);
+
+        document.getElementById("toggle-en").classList.remove("selected");
+        document.getElementById("toggle-cn").classList.add("selected");
+        menu_title_text.innerHTML = menu_title_text_cn;
+        about_btn.innerHTML = about_btn_cn;
+        back_btn.innerHTML = back_btn_cn;
     }
+}
+
+function handleReaderClick() {
+    console.log("reader clicked");
+    // focusMode = false;
+    // focusIdx = -1;
 }

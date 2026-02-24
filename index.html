@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <title>Diaries of Crocodiles</title>
-    <script src="pebble.js"></script>    
+    <script src="pebble.js"></script>
+    <!-- <script src="main.js"></script> -->
+    
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/addons/p5.sound.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -12,45 +14,40 @@
     <!-- constrained writing / conditional rules - how layoput change the meanin g of the text -->
     <!-- print function -->
      <!-- pebbling as editing -->
-    <div id="c">
-
-      
-        <div id="menu">
-            <div id="banner">
-                <p class="Lector">
-                    <!-- <span id="back">&larr;</span> -->
-                    <span id="home" onclick="loadHome()">Diaries of Crocodiles: Lesbian Literature in Chinese<br></span>
-                    
-                    <span id="backhome" onclick="loadHome()">&lt;&lt; Back to Home</span>
-                    <span id="about" onclick="loadAbout()">About</span>
+      <div id="c">
+        <div id="banner">
+            <div id="menu" class="lector font-size-1">
+                <p onclick="loadHome()">
+                    <span id="menu-title-text">Diaries of Crocodiles: Lesbian Literature in Chinese</span> 🐊
                 </p>
-                <p id="toggle-lang">
-                    <span onclick="toggleLang('en')">EN</span> | <span id="toggle-cn" onclick="toggleLang('cn')">中</span>
+                <p>
+                    <span id="back-btn" onclick="loadHome()">&lt;&lt;&nbsp;&nbsp;Back</span>
+                    
+                    <span id="about-btn" onclick="loadAbout()">About</span>
+                </p>
+            </div>
+            <div id="toggle-lang">
+                <p>
+                    <span id="toggle-en" onclick="toggleLang('en')" class="lector font-size-1 selected">EN</span> 
+                    | 
+                    <span id="toggle-cn" onclick="toggleLang('cn')" class="zhuzi-mincho font-size-1">中</span>
                 </p>
             </div>
         </div>
+
+
 
         <div id="content">
             <main id="p5" onclick="handleCanvasClick()"></main>
             <script src="sketch.js" defer></script>
             
-            <div id="t">
-               
-                <div id="exc-container">
-                    
-                </div>
+            <div id="reader-container" onclick="handleReaderClick()">
                 <div id="title"></div>
                 <div id="reader">
-                    
-                   
                         <div id="reader-content"></div>
-                    
                 </div>
             </div>
         </div>
-        
-        
     </div>
-    
 </body>
 </html>
