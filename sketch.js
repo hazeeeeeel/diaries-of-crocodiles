@@ -55,7 +55,7 @@ function setup() {
     reader_container.style.height = `calc(100% - ${banner_height}px)`;
     reader_container.style.top = `${banner_height}px`;
 
-    reader_container.pointerEvents = "none";
+    reader_container.style.pointerEvents = "none";
 
     menu_title_text.innerHTML = lang === "en" ? menu_title_text_en : menu_title_text_cn;
     about_btn.innerHTML = lang === "en" ? about_btn_en : about_btn_cn;
@@ -89,9 +89,9 @@ function draw() {
     }
 
     if (focusMode) {
-        reader_container.pointerEvents = "auto";
+        reader_container.style.pointerEvents = "auto";
     } else {
-        reader_container.pointerEvents = "none";
+        reader_container.style.pointerEvents = "none";
     }
 
     // console.log(works);
@@ -218,8 +218,8 @@ function drawCoordinates() {
     //     line(pebbles[focusIdx].x, 0, pebbles[focusIdx].x, height - 40);
     //     line(30, pebbles[focusIdx].y, width - 30, pebbles[focusIdx].y);
     // } else {
-        line(mouseX, 0, mouseX, height - 40);
-        line(30, mouseY, width - 30, mouseY);
+        line(mouseX, padding, mouseX, height - padding);
+        line(padding, mouseY, width - padding, mouseY);
     // }
 
     // display mouse coordinates
@@ -245,31 +245,31 @@ function drawPebbles() {
 
     setLineDash([]); // reset line dash
 
-    // set drop shadow
-    drawingContext.shadowOffsetX = -24;
-    drawingContext.shadowOffsetY = 18;
-    drawingContext.shadowBlur = 6;
-    drawingContext.shadowColor = 'rgba(0, 0, 0, 0.04)';
+    // // set drop shadow
+    // drawingContext.shadowOffsetX = -24;
+    // drawingContext.shadowOffsetY = 18;
+    // drawingContext.shadowBlur = 6;
+    // drawingContext.shadowColor = 'rgba(0, 0, 0, 0.04)';
 
-    let r = 10;
-    let g = 10;
-    let b = 10;
+    let padding = 30;
+    var year_u = (width - padding * 2) / ((years.length + 1) * 5); // segment unit of 1 year
+    var region_u = (height - padding * 2) / regions.length; // segment unit of 1 region
 
-    // if (!focusMode) {
-        for (let i = 0; i < pebbles.length; i++) {
-            let p = pebbles[i];
-            let x = (works[i].pubyear - 1985) * year_u / 5 + 80;
-            x = min(x, width - _pu - 60);
-            x = max(x, _pu + 60);
-            let y = regions.indexOf(works[i].region) * region_u + 120 + i * 20 - 40;
-            y = min(y, height - _pu - 60);
-            y = max(y, _pu + 60);
+    // // if (!focusMode) {
+    //     for (let i = 0; i < pebbles.length; i++) {
+    //         let p = pebbles[i];
+    //         let x = (works[i].pubyear - 1985) * year_u + padding;
+    //         x = min(x, width - _pu - 60);
+    //         x = max(x, _pu + 60);
+    //         let y = (regions.indexOf(works[i].region) + 0.5) * region_u + padding + (i - 6) * 10;
+    //         y = min(y, height - _pu - 60);
+    //         y = max(y, _pu + 60);
 
-            p.draw(x, y);
-        }
-    // } else {
-    //     pebbles[focusIdx].draw();
-    // }
+    //         p.draw(x, y);
+    //     }
+    // // } else {
+    // //     pebbles[focusIdx].draw();
+    // // }
 
     // reset drop shadow
     drawingContext.shadowOffsetX = 0;
@@ -277,9 +277,7 @@ function drawPebbles() {
     drawingContext.shadowBlur = 0;
     drawingContext.shadowColor = 'rgba(0, 0, 0, 0)';
 
-    let padding = 30;
-    var year_u = (width - padding * 2) / ((years.length + 1) * 5); // segment unit of 1 year
-    var region_u = (height - padding * 2) / regions.length; // segment unit of 1 region
+    
 
     // if (!focusMode) {
         for (let i = 0; i < pebbles.length; i++) {
@@ -290,6 +288,8 @@ function drawPebbles() {
             let y = (regions.indexOf(works[i].region) + 0.5) * region_u + padding + (i - 6) * 10;
             y = min(y, height - _pu - 60);
             y = max(y, _pu + 60);
+
+            
 
             p.draw(x, y);
         }
@@ -322,6 +322,8 @@ function mouseMoved() {
                 let font = lang === "en" ? "lector" : "zhuzi-mincho";
                 let titleText = lang === "en" ? works[p.idx].title.en : works[p.idx].title.cn;
                 title.innerHTML = `<p class="${font}">${titleText}</p>`;
+
+                // drawTraces(2);
             } 
         }
         if (!hovering) {
@@ -329,6 +331,15 @@ function mouseMoved() {
         }
     } 
     
+    
+}
+
+function drawTraces(n) {
+    let p = new Pebble(100);
+    p.draw(mouseX, mouseY, n * 0.12);
+    if (n > 0) {
+        drawTraces(n - 1);
+    }
     
 }
 
@@ -367,6 +378,8 @@ function loadContent(i) {
             
         about_btn.style.display = "inline-block";
         back_btn.style.display = "inline-block";
+
+        reader_container.style.pointerEvents = "auto";
     } 
     else if (i === -2) {
         let html = parseContent(about_content);
@@ -380,6 +393,8 @@ function loadContent(i) {
         back_btn.style.display = "inline-block";
 
         reader.style.display = "block";
+
+        reader_container.style.pointerEvents = "auto";
     }
         
     reader.style.display = "block";
@@ -416,6 +431,8 @@ function loadHome() {
 
     about_btn.style.display = "inline-block";
     back_btn.style.display = "none";
+
+    reader_container.style.pointerEvents = "none";
 }
 
 function loadAbout() {
@@ -424,6 +441,8 @@ function loadAbout() {
     focusIdx = -2;
 
     loadContent(-2);
+
+    reader_container.style.pointerEvents = "auto";
 
     // console.log(about_content);
         
