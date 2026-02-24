@@ -379,6 +379,8 @@ function loadContent(i) {
         about_btn.style.display = "inline-block";
         back_btn.style.display = "inline-block";
 
+        reader_content.classList.add(`${font}`);
+
         reader_container.style.pointerEvents = "auto";
     } 
     else if (i === -2) {
@@ -388,11 +390,15 @@ function loadContent(i) {
         let font = lang === "en" ? "lector" : "zhuzi-mincho";
         let titleText = lang === "en" ? "About" : "关于";
         title.innerHTML = `<p class="${font}">${titleText}</p>`;
+
+        reader_content.classList.add(`${font}`);
+        // reader_content.classList.add("content-text-1");
         
         about_btn.style.display = "none";
         back_btn.style.display = "inline-block";
 
         reader.style.display = "block";
+        
 
         reader_container.style.pointerEvents = "auto";
     }
