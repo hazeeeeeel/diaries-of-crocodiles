@@ -1,6 +1,7 @@
 const minWidth = 800;
 const minHeight = 600;
 
+var data;
 var works_en;
 var works_cn;
 var about_en;
@@ -38,7 +39,7 @@ function preload() {
     // });
     // while (works_en === undefined || works_cn === undefined || about_en === undefined || about_cn === undefined) {
         // wait until data is loaded
-        fetchJSONData();
+        data = loadJSON('data.json');
     // }
         
 
@@ -53,6 +54,12 @@ function setup() {
     
     year_u = (width - 60) / (years.length);
     region_u = (height - 260) / (regions.length - 1);
+
+    works_en = data.works.en;
+    works_cn = data.works.cn;
+    about_en = data.about.en;
+    about_cn = data.about.cn;
+    console.log(works_en);
 
     if (lang === "en") {
         works = works_en;
@@ -83,27 +90,27 @@ function setup() {
 
 }
 
-function fetchJSONData() {
-    // fetch book info 
-    fetch('data.json')
-    .then(response => {
-        if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        // The .json() method automatically parses the JSON response into a JS object
-        return response.json(); 
-    })
-    .then(jsonData => {
-        // console.log(jsonData); // Use the parsed JavaScript object
-        works_en = jsonData.works.en;
-        works_cn = jsonData.works.cn;
-        about_en = jsonData.about.en;
-        about_cn = jsonData.about.cn;
-        console.log(works_en);
-    })
-    .catch(error => {
-        console.error('Error fetching JSON:', error);
-    });
+// function fetchJSONData() {
+//     // fetch book info 
+//     fetch('data.json')
+//     .then(response => {
+//         if (!response.ok) {
+//         throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         // The .json() method automatically parses the JSON response into a JS object
+//         return response.json(); 
+//     })
+//     .then(jsonData => {
+//         // console.log(jsonData); // Use the parsed JavaScript object
+//         works_en = jsonData.works.en;
+//         works_cn = jsonData.works.cn;
+//         about_en = jsonData.about.en;
+//         about_cn = jsonData.about.cn;
+//         console.log(works_en);
+//     })
+//     .catch(error => {
+//         console.error('Error fetching JSON:', error);
+//     });
 
     // fetch excerpt info
     // fetch('reader.json')
@@ -123,7 +130,7 @@ function fetchJSONData() {
     //     console.error('Error fetching JSON:', error);
     // });
 
-}
+// }
 
 function draw() {
     if (!works_en) return; // wait until data is loaded
