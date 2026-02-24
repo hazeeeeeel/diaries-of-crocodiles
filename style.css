@@ -193,6 +193,7 @@ i {
             padding: 0;
 
             #reader-content {
+                height: 100%;
                 overflow: scroll;
             }
 
