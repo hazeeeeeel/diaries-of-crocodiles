@@ -258,7 +258,7 @@ i {
                     padding: 0;          
                     columns: 3;
                     column-gap: 2rem;
-
+                    overflow: scroll;
                 }
             }
 
